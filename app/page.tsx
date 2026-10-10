@@ -9,7 +9,7 @@ import { MobileNav } from "@/components/landing/mobile-nav"
 const skills = {
   "Front-end": ["HTML5", "CSS3", "JavaScript (ES6+)", "React 19", "Next.js 16", "TypeScript 5"],
   "Back-end & données": ["Node.js", "PHP", "Python", "PostgreSQL", "SQLite"],
-  "Outils & méthodes": ["Git & GitHub", "Figma", "Flutter"],
+  "Outils & méthodes": ["Git & GitHub", "Figma", "Kotlin/Android"],
 }
 
 const projects = [
