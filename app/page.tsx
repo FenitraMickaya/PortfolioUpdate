@@ -1,3 +1,5 @@
+"use client"
+
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { ArrowDownRight, ArrowUpRight, CalendarDays, Github, Linkedin, Mail, MapPin, Phone, ExternalLink } from "lucide-react"
