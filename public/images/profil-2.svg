@@ -1,0 +1,25 @@
+<svg width="500" height="650" viewBox="0 0 500 650" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bgProfile" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0f172a"/>
+      <stop offset="50%" style="stop-color:#1e1b4b"/>
+      <stop offset="100%" style="stop-color:#312e81"/>
+    </linearGradient>
+    <linearGradient id="accentProfile" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#22d3ee"/>
+      <stop offset="100%" style="stop-color:#a855f7"/>
+    </linearGradient>
+  </defs>
+  <rect width="500" height="650" fill="url(#bgProfile)"/>
+  <circle cx="250" cy="240" r="100" fill="none" stroke="url(#accentProfile)" stroke-width="3" opacity="0.5"/>
+  <circle cx="250" cy="240" r="80" fill="url(#accentProfile)" opacity="0.15"/>
+  <ellipse cx="250" cy="240" rx="50" ry="35" fill="url(#accentProfile)" opacity="0.3"/>
+  <ellipse cx="220" cy="225" rx="8" ry="10" fill="#22d3ee"/>
+  <ellipse cx="280" cy="225" rx="8" ry="10" fill="#a855f7"/>
+  <path d="M200 270 Q250 290 300 270" fill="none" stroke="url(#accentProfile)" stroke-width="3" stroke-linecap="round"/>
+  <text x="250" y="420" font-family="system-ui, sans-serif" font-size="28" fill="#e2e8f0" text-anchor="middle" font-weight="600">Fenitra Mickaya</text>
+  <text x="250" y="455" font-family="system-ui, sans-serif" font-size="16" fill="#94a3b8" text-anchor="middle">Développeur Full-Stack</text>
+  <text x="250" y="485" font-family="system-ui, sans-serif" font-size="14" fill="#64748b" text-anchor="middle">Next.js · React · TypeScript · Three.js</text>
+  <rect x="150" y="530" width="200" height="3" rx="1.5" fill="url(#accentProfile)" opacity="0.3"/>
+  <text x="250" y="570" font-family="monospace" font-size="12" fill="#475569" text-anchor="middle" letter-spacing="0.3em">FM.</text>
+</svg>
