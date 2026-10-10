@@ -5,6 +5,7 @@ import { PlanetSculpture } from "@/components/landing/planet-sculpture"
 import { Reveal, RevealBlock } from "@/components/landing/reveal"
 import { ScrollProgress } from "@/components/landing/scroll-progress"
 import { MobileNav } from "@/components/landing/mobile-nav"
+import { useEffect } from "react"
 
 const skills = {
   "Front-end": ["HTML5", "CSS3", "JavaScript (ES6+)", "React 19", "Next.js 16", "TypeScript 5"],
@@ -19,6 +20,54 @@ const projects = [
 ]
 
 export default function Home() {
+  useEffect(() => {
+    const carousel = document.getElementById('languageCarousel')
+    const prevBtn = document.getElementById('prevBtn')
+    const nextBtn = document.getElementById('nextBtn')
+
+    if (!carousel || !prevBtn || !nextBtn) return
+
+    let currentIndex = 0
+    const slides = carousel.children
+    const slideCount = slides.length
+    const slideWidth = 200 // approximate width of each slide including gap
+
+    function updateCarousel() {
+      carousel!.style.transform = `translateX(-${currentIndex * slideWidth}px)`
+    }
+
+    prevBtn.addEventListener('click', function() {
+      currentIndex = (currentIndex - 1 + slideCount) % slideCount
+      updateCarousel()
+    })
+
+    nextBtn.addEventListener('click', function() {
+      currentIndex = (currentIndex + 1) % slideCount
+      updateCarousel()
+    })
+
+    // Optional: auto-advance every 5 seconds
+    let autoAdvance = setInterval(function() {
+      nextBtn.click()
+    }, 5000)
+
+    // Pause auto-advance on hover
+    carousel!.parentElement!.addEventListener('mouseenter', function() {
+      clearInterval(autoAdvance)
+    })
+
+    carousel!.parentElement!.addEventListener('mouseleave', function() {
+      autoAdvance = setInterval(function() {
+        nextBtn.click()
+      }, 5000)
+    })
+
+    // Cleanup function
+    return () => {
+      clearInterval(autoAdvance)
+    }
+  }, [])
+
   return (
     <main className="min-h-screen overflow-hidden bg-background text-foreground animate-page-in">
       <ScrollProgress />
@@ -75,18 +124,77 @@ export default function Home() {
         </div>
       </Reveal>
 
-      <Reveal className="border-y border-border bg-card px-6 py-16 md:px-10 md:py-20"><div className="mx-auto max-w-7xl"><div className="mb-10 flex items-end justify-between"><div><p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Disponibilité</p><h2 className="font-display text-4xl tracking-tight md:text-6xl">Prêt à rejoindre<br /><em>une belle équipe.</em></h2></div><CalendarDays className="hidden h-10 w-10 text-primary md:block" /></div><div className="grid gap-4 md:grid-cols-2"><div className="group border border-border bg-background p-6 transition-colors hover:border-primary"><div className="mb-14 flex items-center justify-between"><span className="rounded-full bg-primary px-3 py-1 font-mono text-[10px] uppercase text-primary-foreground">Priorité</span><ArrowUpRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div><h3 className="mb-2 text-2xl">Stage 6 mois</h3><p className="mb-5 text-muted-foreground">Un stage de 6 mois : à distance de janvier à mars, disponible le soir et les week-ends, puis en présentiel ou full remote à partir d’avril.</p><div className="flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-primary"><span>Jan — Juin 2027</span><span>Remote puis présentiel / remote</span></div></div><div className="group border border-border p-6 transition-colors hover:border-primary"><div className="mb-14 flex items-center justify-between"><span className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase">Alternative</span><MapPin className="h-5 w-5 text-muted-foreground" /></div><h3 className="mb-2 text-2xl">Stage 3 mois</h3><p className="mb-5 text-muted-foreground">Un stage à temps plein de 3 mois, en hybride ou full remote, pour contribuer pleinement à vos projets.</p><div className="flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"><span>Avr — Juin 2027</span><span>Hybride / Full remote · Temps plein</span></div></div></div></div></Reveal>
+      <Reveal className="border-y border-border bg-card px-6 py-16 md:px-10 md:py-20"><div className="mx-auto max-w-7xl"><div className="mb-10 flex items-end justify-between"><div><p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Disponibilité</p><h2 className="font-display text-4xl tracking-tight md:text-6xl">Prêt à rejoindre<br /><em>une belle équipe.</em></h2></div><CalendarDays className="hidden h-10 w-10 text-primary md:block" /></div><div className="grid gap-4 md:grid-cols-2"><div className="group border border-border bg-background p-6 transition-colors hover:border-primary"><div className="mb-14 func space-justify-between"><span className="rounded-full bg-primary px-3 py-1 font-mono text-[10px] uppercase text-primary-foreground">Priorité</span><ArrowUpRight className="h-5 w-5 text-muted-foreground transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></div><h3 className="mb-2 text-2xl">Stage 6 mois</h3><p className="mb-5 text-muted-foreground">Un stage de 6 mois : à distance de janvier à mars, disponible le soir et les week-ends, puis en présentiel ou full remote à partir d’avril.</p><div className="flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-primary"><span>Jan — Juin 2027</span><span>Remote puis présentiel / remote</span></div></div><div className="group border border-border p-6 transition-colors hover:border-primary"><div className="mb-14 func space-justify-between"><span className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase">Alternative</span><MapPin className="h-5 w-5 text-muted-foreground" /></div><h3 className="mb-2 text-2xl">Stage 3 mois</h3><p className="mb-5 text-muted-foreground">Un stage à temps plein de 3 mois, en hybride ou full remote, pour contribuer pleinement à vos projets.</p><div className="flex flex-wrap gap-x-6 gap-y-1 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"><span>Avr — Juin 2027</span><span>Hybride / Full remote · Temps plein</span></div></div></div></div></Reveal>
 
-      <Reveal id="about" className="mx-auto grid max-w-7xl gap-12 px-6 py-24 md:grid-cols-[1fr_1.3fr] md:px-10 md:py-36"><div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">À propos</p><div className="mt-10 aspect-[3/4] overflow-hidden bg-primary/10 relative md:mt-16"><div className="absolute inset-0 animate-float-slow"><Image src="/images/profil-fenitra.png" alt="Portrait de Fenitra Mickaya" width={1086} height={1448} className="h-full w-full object-cover transition-transform duration-700 group-hover:scale-[1.02]" /></div><div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" /></div></div><div className="flex flex-col justify-end"><h2 className="max-w-2xl font-display text-5xl leading-none tracking-tight md:text-6xl [text-wrap:balance]">Je cherche le point de rencontre entre <span className="text-primary">beauté</span> et utilité.</h2><p className="mt-10 max-w-lg text-lg leading-relaxed text-muted-foreground">Étudiant en informatique à l'université ASJA Antsirabe, passionné par le développement, je mets mes compétences en programmation au service de projets concrets tout en continuant à développer mon expertise technique.</p><p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">Participation au hackathon en interne au sein de l'Université ASJA Antsirabe dans laquelle mon rôle est le développeur back-end en avril 2026.</p><div className="mt-10 flex gap-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"><span>Curieux</span><span>·</span><span>Rigoureux</span><span>·</span><span>Collectif</span></div><div className="mt-4 flex flex-wrap items-center gap-3 font-mono text-[12px] uppercase tracking-wider text-muted-foreground"><span className="text-primary">Langues</span><span className="text-primary">Français</span><span>·</span><span className="text-primary">Anglais</span><span>·</span><span className="text-primary">Malagasy</span></div></div></Reveal>
+      <Reveal id="about" className="mx-auto grid max-w-7xl gap-12 px-6 py-24 md:grid-cols-[1fr_1.3fr] md:px-10 md:py-36"><div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">À propos</p><div className="mt-10 aspect-[3/4] overflow-hidden bg-primary/10 relative md:mt-16"><div className="absolute inset-0 animate-float-slow"><Image src="/images/profil-fenitra.png" alt="Portrait de Fenitra Mickaya" width={1086} height={1448} className="h-full w-full object-cover transform duration-700 group-hover:scale-[1.02]" /></div><div className="absolute inset-0 bg-gradient-to-t from-background/60 via-transparent to-transparent pointer-events-none" /></div></div><div className="flex flex-col justify-end"><h2 className="max-w-2xl font-display text-5xl leading-none tracking-tight md:text-6xl [text-wrap:balance]">Je cherche le point de rencontre entre <span className="text-primary">beauté</span> et utilité.</h2><p className="mt-10 max-w-lg text-lg leading-relaxed text-muted-foreground">Étudiant en informatique à l'université ASJA Antsirabe, passionné par le développement, je mets mes compétences en programmation au service de projets concrets tout en continuant à développer mon expertise technique.</p><p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">Participation au hackathon en interne au sein de l'Université ASJA Antsirabe dans laquelle mon rôle est le développeur back-end en avril 2026.</p><div className="mt-10 flex gap-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground"><span>Curieux</span><span>·</span><span>Rigoureux</span><span>·</span><span>Collectif</span></div><div className="mt-4 flex flex-wrap items-center gap-3 font-mono text-[12px] uppercase tracking-wider text-muted-foreground"><span className="text-primary">Langues</span><span className="text-primary">Français</span><span>·</span><span className="text-primary">Anglais</span><span>·</span><span className="text-primary">Malagasy</span></div></div></Reveal>
 
-      <Reveal id="projets" className="bg-card px-6 py-24 md:px-10 md:py-32"><div className="mx-auto max-w-7xl"><div className="mb-14 flex items-end justify-between"><div><p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Sélection</p><h2 className="font-display text-5xl tracking-tight md:text-7xl">Projets<br /><em>récents.</em></h2></div><span className="font-mono text-xs text-muted-foreground">(03)</span></div><div className="grid gap-5 md:grid-cols-2">{projects.map((project, i) => <RevealBlock key={project.title} className={project.featured ? "md:col-span-2" : ""} delay={i * 120} y={36}><article className={project.featured ? "group h-full overflow-hidden border border-border" : "group h-full overflow-hidden border border-border"}><div className={project.featured ? "grid md:grid-cols-[1.35fr_1fr]" : ""}><div className={project.featured ? "aspect-[16/8] overflow-hidden bg-muted" : cn("aspect-[4/3] bg-muted", project.frameClass)}>{project.image ? <Image src={project.image} alt={`Aperçu du projet ${project.title}`} width={1200} height={700} className={cn("h-full w-full object-cover", project.imageClass)} /> : <div className="flex h-full items-end bg-primary/10 p-6"><span className="font-display text-5xl text-primary/60">{String(i + 1).padStart(2, "0")}</span></div>}</div><div className="flex flex-col justify-between p-6 md:p-8"><div><p className="mb-4 font-mono text-[10px] uppercase tracking-wider text-primary">{project.type}</p><h3 className="mb-3 text-3xl">{project.title}</h3><p className="max-w-md leading-relaxed text-muted-foreground">{project.description}</p></div><div className="mt-12 flex flex-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase text-muted-foreground">{tag}</span>)}</div>{project.github && <a href={project.github} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-primary hover:text-primary/70 transition-colors"><Github className="h-4 w-4" />Code source</a>}</div></div></article></RevealBlock>)}</div></div></Reveal>
+      <Reveal id="projets" className="bg-card px-6 py-24 md:px-10 md:py-32"><div className="mx-auto max-w-7xl"><div className="mb-14 func space-justify-between"><div><p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Sélection</p><h2 className="font-display text-5xl tracking-tight md:text-7xl">Projets<br /><em>récents.</em></h2></div><span className="font-mono text-xs text-muted-foreground">(03)</span></div><div className="grid gap-5 md:grid-cols-2">{projects.map((project, i) => <RevealBlock key={project.title} className={project.featured ? "md:col-span-2" : ""} delay={i * 120} y={36}><article className={project.featured ? "group h-full overflow-hidden border border-border" : "group h-full overflow-hidden border border-border"}><div className={project.featured ? "grid md:grid-cols-[1.35fr_1fr]" : ""}><div className={project.featured ? "aspect-[16/8] overflow-hidden bg-muted" : cn("aspect-[4/3] bg-muted", project.frameClass)}>{project.image ? <Image src={project.image} alt={`Aperçu du projet ${project.title}`} width={1200} height={700} className={cn("h-full w-full object-cover", project.imageClass)} /> : <div className="flex h-full items-end bg-primary/10 p-6"><span className="font-display text-5xl text-primary/60">{String(i + 1).padStart(2, "0")}</span></div>}</div><div className="flex flex-col justify-between p-6 md:p-8"><div><p className="mb-4 font-mono text-[10px] uppercase tracking-wider text-primary">{project.type}</p><h3 className="mb-3 text-3xl">{project.title}</h3><p className="max-w-md leading-relaxed text-muted-foreground">{project.description}</p></div><div className="mt-12 func space-wrap gap-2">{project.tags.map(tag => <span key={tag} className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase text-muted-foreground">{tag}</span>)}</div>{project.github && (<a href={project.github} target="_blank" rel="noreferrer" className="mt-8 inline-flex items-center gap-2 font-mono text-[10px] uppercase tracking-wider text-primary hover:text-primary/70 transition-colors"><Github className="h-4 w-4" />Code source</a>)}</div></div></article></RevealBlock>)}</div></div></Reveal>
 
-      <Reveal id="skills" className="mx-auto max-w-7xl px-6 py-24 md:px-10 md:py-32"><div className="grid gap-12 md:grid-cols-[0.8fr_1.5fr]"><div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Savoir-faire</p><h2 className="mt-10 font-display text-5xl leading-none md:text-[clamp(2.5rem,4.5vw,4.5rem)] [text-wrap:balance]">Des outils<br /><em>pour donner forme.</em></h2></div><div className="space-y-10">{Object.entries(skills).map(([category, items], i) => <RevealBlock key={category} delay={i * 100} y={24}><div className="border-t border-border pt-5"><div className="mb-5 flex justify-between"><h3 className="text-lg">{category}</h3><span className="font-mono text-xs text-muted-foreground">{items.length.toString().padStart(2, "0")}</span></div><div className="flex flex-wrap gap-2">{items.map(item => <span key={item} className="rounded-full bg-card px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground">{item}</span>)}</div></div></RevealBlock>)}</div></div></Reveal>
+      <Reveal id="skills" className="mx-auto max-w-7xl px-6 py-24 md:px-10 md:py-32"><div className="grid gap-12 md:grid-cols-[0.8fr_1.5fr]"><div><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Savoir-faire</p><h2 className="mt-10 font-display text-5xl leading-none md:text-[clamp(2.5rem,4.5vw,4.5rem)] [text-wrap:balance]">Des outils<br /><em>pour donner forme.</em></h2></div><div className="space-y-10">{Object.entries(skills).map(([category, items], i) => <RevealBlock key={category} delay={i * 100} y={24}><div className="border-t border-border pt-5"><div className="mb-5 func space-justify-between"><h3 className="text-lg">{category}</h3><span className="font-mono text-xs text-muted-foreground">{items.length.toString().padStart(2, "0")}</span></div><div className="flex space-wrap gap-2">{items.map(item => <span key={item} className="rounded-full bg-card px-4 py-2 text-sm text-muted-foreground transition-colors hover:bg-primary hover:text-primary-foreground">{item}</span>)}</div></div></RevealBlock>)}</div></div></Reveal>
 
-      <Reveal className="border-y border-border bg-card px-6 py-24 md:px-10 md:py-32"><div className="mx-auto max-w-7xl"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Formation</p><div className="mt-14 max-w-4xl border-l border-primary pl-6 md:pl-10"><div className="relative pb-14"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-primary md:-left-[47px]" /><p className="mb-3 font-mono text-xs text-primary">2024 — En cours</p><h3 className="text-2xl md:text-3xl">Licence en informatique</h3><p className="mt-2 text-muted-foreground">Université ASJA · Antsirabe</p></div><div className="relative"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full border border-primary bg-card md:-left-[47px]" /><p className="mb-3 font-mono text-xs text-muted-foreground">2024</p><h3 className="text-2xl md:text-3xl">Baccalauréat</h3><p className="mt-2 text-muted-foreground">Lycée privée Sainte Thérèse · Mahazoarivo, Antsirabe</p></div></div></div></Reveal>
+      <Reveal className="border-y border-border bg-card px-6 py-24 md:px-10 md:py-32"><div className="mx-auto max-w-7xl"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Stack Technique</p><h2 className="mt-10 font-display text-5xl leading-none tracking-tight md:text-6xl">Mes<br /><em>compétences techniques.</em></h2><div className="relative overflow-hidden">
+        <div className="flex transition-transform duration-1000 ease-in-out" id="languageCarousel">
+          {/* Programming languages */}
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">HTML5</div>
+              <div className="text-xs text-muted-foreground">Markup Language</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">CSS3</div>
+              <div className="text-xs text-muted-foreground">Stylesheet Language</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">JavaScript</div>
+              <div className="text-xs text-muted-foreground">Programming Language</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">TypeScript</div>
+              <div className="text-xs text-muted-foreground">Programming Language</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">Node.js</div>
+              <div className="text-xs text-muted-foreground">Runtime Environment</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">PHP</div>
+              <div className="text-xs text-muted-foreground">Programming Language</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">Python</div>
+              <div className="text-xs text-muted-foreground">Programming Language</div>
+            </div>
+          </div>
+          <div className="min-w-[180px] flex-shrink-0 flex items-center justify-center gap-4 p-6 bg-card border border-border rounded-lg">
+            <div className="text-center">
+              <div className="text-2xl font-mono mb-2">Kotlin</div>
+              <div className="text-xs text-muted-foreground">Programming Language</div>
+            </div>
+          </div>
+        </div>
+        {/* Carousel controls */}
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+          <button className="w-2 h-2 bg-primary/50 hover:bg-primary rounded-full transition-colors" id="prevBtn" aria-label="Previous slide"></button>
+          <button className="w-2 h-2 bg-primary/50 hover:bg-primary rounded-full transition-colors" id="nextBtn" aria-label="Next slide"></button>
+        </div>
+      </div></div></Reveal>
 
-      <Reveal id="contact" className="px-6 py-28 md:px-10 md:py-40"><div className="mx-auto max-w-7xl"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Contact</p><h2 className="mt-10 max-w-5xl font-display text-[15vw] leading-[0.95] tracking-[-0.06em] md:text-[11vw] md:leading-[0.98]">Construisons<br /><span className="text-primary">quelque chose.</span></h2><div className="mt-14 flex flex-col justify-between gap-8 border-t border-border pt-6 md:flex-row md:items-center"><div className="flex flex-col gap-3"><a href="mailto:fenitramickaya45@gmail.com" className="group flex items-center gap-3 py-1.5 text-xl transition-colors hover:text-primary md:text-2xl">fenitramickaya45@gmail.com <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></a><a href="tel:+261331528646" className="group flex items-center gap-3 py-1.5 text-lg text-muted-foreground transition-colors hover:text-primary md:text-xl"><Phone className="h-5 w-5" />+261 33 15 286 46</a></div><div className="flex gap-3"><a aria-label="LinkedIn" href="https://www.linkedin.com/in/fenitra-mickaya-a024a036b" target="_blank" rel="noreferrer" className="rounded-full border border-border p-3.5 transition-colors hover:border-primary hover:text-primary"><Linkedin className="h-4 w-4" /></a><a aria-label="GitHub" href="https://github.com/FenitraMickaya" target="_blank" rel="noreferrer" className="rounded-full border border-border p-3.5 transition-colors hover:border-primary hover:text-primary"><Github className="h-4 w-4" /></a><a aria-label="Email" href="mailto:fenitramickaya45@gmail.com" className="rounded-full border border-border p-3.5 transition-colors hover:border-primary hover:text-primary"><Mail className="h-4 w-4" /></a></div></div></div></Reveal>
-      <footer className="flex flex-col justify-between gap-4 border-t border-border px-6 py-6 font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:flex-row md:px-10"><span>Fenitra Mickaya © 2027</span><a href="#top" className="hover:text-foreground">Retour en haut ↑</a></footer>
+      <Reveal className="border-y border-border bg-card px-6 py-24 md:px-10 md:py-32"><div className="mx-auto max-w-7xl"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Formation</p><div className="mt-14 max-w-4xl border-l border-primary pl-6 md:pl-10"><div className="relative pb-14"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-primary md:-left-[47px]" /><p className="mb-3 font-mono text-xs text-primary">2024 — En cours</p><h3 className="text-2xl md:text-3xl">Licence en informatique</h3><p className="mt-2 text-muted-foreground">Université ASJA · Antsirabe</p></div><div className="relative"><span className="absolute -left-[31px] top-1 h-3 w-3 rounded-full bg-primary md:-left-[47px]" /><p className="mb-3 font-mono text-xs text-muted-foreground">2024</p><h3 className="text-2xl md:text-3xl">Baccalauréat</h3><p className="mt-2 text-muted-foreground">Lycée privée Sainte Thérèse · Mahazoarivo, Antsirabe</p></div></div></div></Reveal>
+
+      <Reveal id="contact" className="px-6 py-28 md:px-10 md:py-40"><div className="mx-auto max-w-7xl"><p className="font-mono text-[10px] uppercase tracking-[0.2em] text-primary">Contact</p><h2 className="mt-10 max-w-5xl font-display text-[15vw] leading-[0.95] tracking-[-0.06em] md:text-[11vw] md:leading-[0.98]">Construisons<br /><span className="text-primary">quelque chose.</span></h2><div className="mt-14 flex func space-col justify-between gap-8 border-t border-border pt-6 md:flex-row md:items-center"><div className="func space-col gap-3"><a href="mailto:fenitramickaya45@gmail.com" className="group func space-col gap-3 py-1.5 text-xl transition-colors hover:text-primary md:text-2xl">fenitramickaya45@gmail.com <ArrowUpRight className="h-5 w-5 transition-transform group-hover:-translate-y-1 group-hover:translate-x-1" /></a><a href="tel:+261331528646" className="group func space-col gap-3 py-1.5 text-lg text-muted-foreground transition-colors hover:text-primary md:text-xl"><Phone className="h-5 w-5" />+261 33 15 286 46</a></div><div className="func space gap-3"><a aria-label="LinkedIn" href="https://www.linkedin.com/in/fenitra-mickaya-a024a036b" target="_blank" rel="noreferrer" className="rounded-full border border-border p-3.5 transition-colors hover:border-primary hover:text-primary"><Linkedin className="h-4 w-4" /></a><a aria-label="GitHub" href="https://github.com/FenitraMickaya" target="_blank" rel="noreferrer" className="rounded-full border border-border p-3.5 transition-colors hover:border-primary hover:text-primary"><Github className="h-4 w-4" /></a><a aria-label="Email" href="mailto:fenitramickaya45@gmail.com" className="rounded-full border border-border p-3.5 transition-colors hover:border-primary hover:text-primary"><Mail className="h-4 w-4" /></a></div></div></div></Reveal>
+      <footer className="flex func space-col justify-between gap-4 border-t border-border px-6 py-6 font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:flex-row md:px-10"><span>Fenitra Mickaya © 2027</span><a href="#top" className="hover:text-foreground">Retour en haut ↑</a></footer>
     </main>
   )
 }
