@@ -2,19 +2,31 @@
 
 import { Suspense, useEffect, useMemo, useRef, useState } from "react"
 import { Canvas, useFrame, useThree } from "@react-three/fiber"
-import { Environment, Float } from "@react-three/drei"
+import { Environment, Float, Lightformer } from "@react-three/drei"
 import * as THREE from "three"
 
-function useIsMobile() {
-  const [mobile, setMobile] = useState(false)
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"
+
+function getReducedMotionPreference() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia(REDUCED_MOTION_QUERY).matches
+  )
+}
+
+function usePrefersReducedMotion() {
+  const [reducedMotion, setReducedMotion] = useState(getReducedMotionPreference)
+
   useEffect(() => {
-    const mq = window.matchMedia("(max-width: 768px)")
-    const update = () => setMobile(mq.matches)
+    const mediaQuery = window.matchMedia?.(REDUCED_MOTION_QUERY)
+    const update = () => setReducedMotion(mediaQuery?.matches ?? false)
     update()
-    mq.addEventListener("change", update)
-    return () => mq.removeEventListener("change", update)
+    mediaQuery?.addEventListener?.("change", update)
+    return () => mediaQuery?.removeEventListener?.("change", update)
   }, [])
-  return mobile
+
+  return reducedMotion
 }
 
 interface RingConfig {
@@ -106,11 +118,11 @@ function makeGridGeometry(radius: number, meridians = 18, parallels = 9) {
   return geo
 }
 
-function usePlanetAssets(mobile: boolean) {
+function usePlanetAssets() {
   return useMemo(() => {
-    const radius = mobile ? 0.85 : 0.95
+    const radius = 0.95
 
-    const planetGeometry = makePlanetGeometry(radius, mobile ? 0.02 : 0.028)
+    const planetGeometry = makePlanetGeometry(radius, 0.028)
     const gridGeometry = makeGridGeometry(radius * 1.035)
     const haloGeometry = new THREE.SphereGeometry(radius * 1.06, 48, 48)
 
@@ -190,10 +202,10 @@ function usePlanetAssets(mobile: boolean) {
       halo,
       ringMats,
     }
-  }, [mobile])
+  }, [])
 }
 
-function PlanetScene({ mobile }: { mobile: boolean }) {
+function PlanetScene({ reducedMotion }: { reducedMotion: boolean }) {
   const { camera } = useThree()
   const spin = useRef<THREE.Group>(null!)
   const orb = useRef<THREE.Group>(null!)
@@ -204,7 +216,7 @@ function PlanetScene({ mobile }: { mobile: boolean }) {
   const scroll = useRef(0)
   const smooth = useRef({ yaw: 0, pitch: 0, scroll: 0, camX: 0, camY: 0 })
 
-  const assets = usePlanetAssets(mobile)
+  const assets = usePlanetAssets()
   const {
     planetGeometry,
     gridGeometry,
@@ -221,10 +233,12 @@ function PlanetScene({ mobile }: { mobile: boolean }) {
     ringMats,
   } = assets
 
-  const activeRings = mobile ? RINGS.slice(0, 3) : RINGS
-  const activeOrbiters = mobile ? ORBITERS.slice(0, 4) : ORBITERS
+  const activeRings = RINGS
+  const activeOrbiters = ORBITERS
 
   useEffect(() => {
+    if (reducedMotion) return
+
     const onMove = (e: MouseEvent) => {
       mouse.current.x = (e.clientX / window.innerWidth) * 2 - 1
       mouse.current.y = (e.clientY / window.innerHeight) * 2 - 1
@@ -238,7 +252,7 @@ function PlanetScene({ mobile }: { mobile: boolean }) {
       window.removeEventListener("mousemove", onMove)
       window.removeEventListener("scroll", onScroll)
     }
-  }, [])
+  }, [reducedMotion])
 
   useEffect(() => {
     return () => {
@@ -273,6 +287,32 @@ function PlanetScene({ mobile }: { mobile: boolean }) {
   ])
 
   useFrame((state, delta) => {
+    if (reducedMotion) {
+      const g = spin.current
+      g.rotation.set(0.4, 0, 0)
+      g.position.y = 0
+
+      if (orb.current) {
+        orb.current.rotation.set(0, 0, 0.09)
+      }
+
+      for (let i = 0; i < activeRings.length; i++) {
+        const ring = ringRefs.current[i]
+        if (ring) ring.rotation.z = 0
+      }
+
+      for (let i = 0; i < activeOrbiters.length; i++) {
+        const sat = satRefs.current[i]
+        if (!sat) continue
+        const cfg = activeOrbiters[i]
+        sat.position.set(Math.cos(cfg.phase) * cfg.r, Math.sin(cfg.phase) * cfg.r, 0)
+      }
+
+      camera.position.set(0, 0.1, 4.4)
+      camera.lookAt(0, 0, 0)
+      return
+    }
+
     const t = state.clock.elapsedTime
     const m = mouse.current
     const s = smooth.current
@@ -322,40 +362,48 @@ function PlanetScene({ mobile }: { mobile: boolean }) {
     camera.lookAt(0, 0, 0)
   })
 
-  return (
-    <group ref={spin} scale={mobile ? 0.72 : 0.9}>
-      <Float speed={0.7} rotationIntensity={0.1} floatIntensity={0.35}>
-        <group>
-          {/* Central planet: displaced core + tech grid + halo */}
-          <group ref={orb}>
-            <mesh geometry={planetGeometry} material={obsidian} />
-            <lineSegments geometry={gridGeometry} material={gridLine} />
-            <mesh geometry={haloGeometry} material={halo} />
+  const scene = (
+    <group>
+      {/* Central planet: displaced core + tech grid + halo */}
+      <group ref={orb}>
+        <mesh geometry={planetGeometry} material={obsidian} />
+        <lineSegments geometry={gridGeometry} material={gridLine} />
+        <mesh geometry={haloGeometry} material={halo} />
+      </group>
+
+      {/* Orbital rings (independent inclination + in-plane spin) */}
+      {activeRings.map((ring, i) => (
+        <group key={i} rotation={ring.tilt}>
+          <group scale={ring.ellipse ?? [1, 1, 1]}>
+            <mesh ref={(el) => (ringRefs.current[i] = el)} geometry={torusGeos[i]} material={ringMats[i]} />
           </group>
-
-          {/* Orbital rings (independent inclination + in-plane spin) */}
-          {activeRings.map((ring, i) => (
-            <group key={i} rotation={ring.tilt}>
-              <group scale={ring.ellipse ?? [1, 1, 1]}>
-                <mesh ref={(el) => (ringRefs.current[i] = el)} geometry={torusGeos[i]} material={ringMats[i]} />
-              </group>
-            </group>
-          ))}
-
-          {/* Satellites traveling on their orbit plane */}
-          {activeOrbiters.map((o, i) => (
-            <group key={i} rotation={RINGS[o.frame].tilt}>
-              <group scale={RINGS[o.frame].ellipse ?? [1, 1, 1]}>
-                <mesh
-                  ref={(el) => (satRefs.current[i] = el)}
-                  geometry={o.size > 0.085 ? orbiterBig : orbiterSmall}
-                  material={o.glow ? glow : o.size < 0.075 ? steel : chrome}
-                />
-              </group>
-            </group>
-          ))}
         </group>
-      </Float>
+      ))}
+
+      {/* Satellites traveling on their orbit plane */}
+      {activeOrbiters.map((o, i) => (
+        <group key={i} rotation={RINGS[o.frame].tilt}>
+          <group scale={RINGS[o.frame].ellipse ?? [1, 1, 1]}>
+            <mesh
+              ref={(el) => (satRefs.current[i] = el)}
+              geometry={o.size > 0.085 ? orbiterBig : orbiterSmall}
+              material={o.glow ? glow : o.size < 0.075 ? steel : chrome}
+            />
+          </group>
+        </group>
+      ))}
+    </group>
+  )
+
+  return (
+    <group ref={spin} scale={0.9}>
+      {reducedMotion ? (
+        scene
+      ) : (
+        <Float speed={0.7} rotationIntensity={0.1} floatIntensity={0.35}>
+          {scene}
+        </Float>
+      )}
     </group>
   )
 }
@@ -363,7 +411,7 @@ function PlanetScene({ mobile }: { mobile: boolean }) {
 export function PlanetSculpture({ className = "" }: { className?: string }) {
   const ref = useRef<HTMLDivElement | null>(null)
   const [inView, setInView] = useState(false)
-  const mobile = useIsMobile()
+  const reducedMotion = usePrefersReducedMotion()
 
   useEffect(() => {
     const el = ref.current
@@ -385,19 +433,44 @@ export function PlanetSculpture({ className = "" }: { className?: string }) {
       {inView ? (
         <Canvas
           dpr={[1, 2]}
+          frameloop={reducedMotion ? "demand" : "always"}
           camera={{ position: [0, 0.1, 4.4], fov: 40 }}
           gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
           style={{ position: "absolute", inset: 0, background: "transparent" }}
         >
           <Suspense fallback={null}>
-            <PlanetScene mobile={mobile} />
+            <PlanetScene reducedMotion={reducedMotion} />
 
             <ambientLight intensity={0.5} />
             <directionalLight position={[4, 6, 5]} intensity={1.5} />
             <directionalLight position={[-4, 2, -3]} intensity={0.5} color="#efebe6" />
             <spotLight position={[0, 4, -4]} angle={0.5} penumbra={1} intensity={0.85} color="#ffffff" />
 
-            <Environment preset="studio" />
+            <Environment resolution={128}>
+              <Lightformer
+                form="rect"
+                intensity={4}
+                color="#ffffff"
+                position={[0, 5, -9]}
+                scale={[10, 10, 1]}
+              />
+              <Lightformer
+                form="rect"
+                intensity={2}
+                color="#d8d4cc"
+                position={[-5, 1, -1]}
+                rotation-y={Math.PI / 2}
+                scale={[8, 2, 1]}
+              />
+              <Lightformer
+                form="rect"
+                intensity={1.5}
+                color="#f5f0e6"
+                position={[5, -1, 2]}
+                rotation-y={-Math.PI / 2}
+                scale={[6, 1, 1]}
+              />
+            </Environment>
           </Suspense>
         </Canvas>
       ) : null}

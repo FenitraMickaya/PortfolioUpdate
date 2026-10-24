@@ -10,10 +10,17 @@ const fr = {
   nav: {
     projects: "Projets",
     about: "À propos",
+    experience: "Expérience",
     skills: "Compétences",
     contact: "Me contacter",
+    contactCompact: "Contact",
     menu: "Menu",
     close: "Fermer",
+    mobileNavigation: "Navigation mobile",
+  },
+  language: {
+    label: "Langue",
+    triggerPrefix: "Langue :",
   },
   hero: {
     badge: "Ouvert au stage — Janvier 2027",
@@ -52,11 +59,50 @@ const fr = {
       "Participation au hackathon en interne au sein de l'Université ASJA Antsirabe dans laquelle mon rôle est le développeur back-end en avril 2026.",
     traits: ["Curieux", "Rigoureux", "Collectif"],
   },
+  experience: {
+    label: "Expérience",
+    title1: "Expérience",
+    title2: "en production.",
+    count: "(02)",
+    items: [
+      {
+        organization: "Tynoc Tech",
+        role: "Stagiaire ingénieur logiciel",
+        context: "Stage de 4 semaines · Full remote",
+        period: "17 Oct — 17 Nov 2026",
+        status: "En cours",
+        summary:
+          "Développement d’un MVP full-stack de création de formulaires, avec chatbot intégrable et gestion des réponses.",
+        technologies: [
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Tailwind CSS",
+          "PostgreSQL",
+        ],
+      },
+      {
+        organization: "UN T’ELLE SUCCÈS & ÉLITE by Dayana Ouederni",
+        role: "Stagiaire développement web & SEO",
+        context: "Stage de 8 semaines · Full remote",
+        period: "Oct — Déc 2026",
+        status: "En cours",
+        summary:
+          "Refonte premium du site WordPress, UX mobile, SEO technique et local, contenus éditoriaux et passation.",
+        technologies: [
+          "WordPress",
+          "SEO",
+          "UX mobile",
+          "Google Business Profile",
+        ],
+      },
+    ],
+  },
   projects: {
     label: "Sélection",
     title1: "Projets",
     title2: "récents.",
-    count: "(03)",
+    count: "(04)",
     source: "Code source",
     imageAlt: "Aperçu du projet",
     items: [
@@ -77,6 +123,12 @@ const fr = {
         type: "Application web · Projet académique",
         description:
           "Système intelligent de triage médical analysant les symptômes pour évaluer la gravité des patients, orienter vers les centres adaptés et optimiser la gestion des urgences et des ambulances.",
+      },
+      {
+        title: "Chatform",
+        type: "Application web · Formulaires conversationnels",
+        description:
+          "Construisez des formulaires conversationnels interactifs, publiez-les, intégrez le widget de chat sur n'importe quel site web avec un script d'une ligne, collectez les réponses et analysez-les depuis un tableau de bord.",
       },
     ],
   },
@@ -120,10 +172,17 @@ const en: Dict = {
   nav: {
     projects: "Projects",
     about: "About",
+    experience: "Experience",
     skills: "Skills",
     contact: "Contact me",
+    contactCompact: "Contact",
     menu: "Menu",
     close: "Close",
+    mobileNavigation: "Mobile navigation",
+  },
+  language: {
+    label: "Language",
+    triggerPrefix: "Language:",
   },
   hero: {
     badge: "Open to internship — January 2027",
@@ -162,11 +221,50 @@ const en: Dict = {
       "Took part in the internal hackathon at ASJA University in April 2026, where I worked as the back-end developer.",
     traits: ["Curious", "Rigorous", "Team player"],
   },
+  experience: {
+    label: "Experience",
+    title1: "Experience",
+    title2: "in production.",
+    count: "(02)",
+    items: [
+      {
+        organization: "Tynoc Tech",
+        role: "Software Engineer Intern",
+        context: "4-week internship · Fully remote",
+        period: "Oct 17 — Nov 17, 2026",
+        status: "In progress",
+        summary:
+          "Development of a full-stack form-building MVP, with an embeddable chatbot and response management.",
+        technologies: [
+          "Next.js",
+          "React",
+          "TypeScript",
+          "Tailwind CSS",
+          "PostgreSQL",
+        ],
+      },
+      {
+        organization: "UN T’ELLE SUCCÈS & ÉLITE by Dayana Ouederni",
+        role: "Web development & SEO intern",
+        context: "8-week internship · Fully remote",
+        period: "Oct — Dec 2026",
+        status: "In progress",
+        summary:
+          "Premium WordPress website redesign, mobile UX, technical and local SEO, editorial content, and handover.",
+        technologies: [
+          "WordPress",
+          "SEO",
+          "Mobile UX",
+          "Google Business Profile",
+        ],
+      },
+    ],
+  },
   projects: {
     label: "Selection",
     title1: "Recent",
     title2: "projects.",
-    count: "(03)",
+    count: "(04)",
     source: "Source code",
     imageAlt: "Project preview",
     items: [
@@ -187,6 +285,12 @@ const en: Dict = {
         type: "Web app · Academic project",
         description:
           "Smart medical triage system analyzing symptoms to assess patient severity, route them to the right centers and optimize emergency and ambulance management.",
+      },
+      {
+        title: "Chatform",
+        type: "Web app · Conversational forms",
+        description:
+          "Build interactive conversational forms, publish them, embed the chat widget on any website with a one-line script, collect responses and analyse them from a dashboard.",
       },
     ],
   },

@@ -91,9 +91,23 @@
   html {
     scroll-behavior: smooth;
   }
+  section[id] {
+    scroll-margin-top: 6rem;
+  }
 }
 
 @layer utilities {
+  .skip-link {
+    position: fixed;
+    top: 1rem;
+    left: -9999px;
+    z-index: 100;
+  }
+
+  .skip-link:focus {
+    left: 1rem;
+  }
+
   .animate-page-in {
     animation: page-in 0.8s cubic-bezier(0.22, 1, 0.36, 1) both;
   }
@@ -125,7 +139,15 @@
     *, *::before, *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+
+    .animate-page-in,
+    .hero-drift,
+    .animate-float-slow {
+      animation: none !important;
+      transform: none !important;
     }
   }
 }

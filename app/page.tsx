@@ -12,7 +12,7 @@ import {
   Phone,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
-import { PlanetSculpture } from "@/components/landing/planet-sculpture"
+import { DesktopPlanetSculpture } from "@/components/landing/desktop-planet-sculpture"
 import { Reveal, RevealBlock } from "@/components/landing/reveal"
 import { ScrollProgress } from "@/components/landing/scroll-progress"
 import { MobileNav } from "@/components/landing/mobile-nav"
@@ -62,42 +62,65 @@ const projects: Project[] = [
     tags: ["React", "TypeScript", "SQL"],
     github: "https://github.com/FenitraMickaya/Mada-care",
   },
+  {
+    image: "/images/projet-chatform.png",
+    tags: ["Next.js", "React", "TypeScript", "Tailwind CSS", "PostgreSQL"],
+    github: "https://github.com/FenitraMickaya/chatform.git",
+  },
 ]
 
 export default function Home() {
-  const { t } = useLanguage()
+  const { t, locale } = useLanguage()
+  const skipLabel = locale === "fr" ? "Aller au contenu" : "Skip to content"
 
   return (
-    <main className="min-h-screen overflow-hidden bg-background text-foreground animate-page-in">
-      <ScrollProgress />
+    <>
+      <a
+        href="#main"
+        className="skip-link rounded-full border border-border bg-background px-4 py-3 font-mono text-[10px] uppercase tracking-[0.18em] text-foreground"
+      >
+        {skipLabel}
+      </a>
 
-      <nav className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-6 py-5 mix-blend-difference text-background md:px-10">
-        <a href="#top" className="font-mono text-xs uppercase tracking-[0.24em]">
-          FM<span className="text-primary">.</span>
-        </a>
-        <div className="hidden items-center gap-8 font-mono text-[10px] uppercase tracking-[0.18em] md:flex">
-          <a href="#projets" className="transition-opacity hover:opacity-60">
-            {t.nav.projects}
-          </a>
-          <a href="#about" className="transition-opacity hover:opacity-60">
-            {t.nav.about}
-          </a>
-          <a href="#skills" className="transition-opacity hover:opacity-60">
-            {t.nav.skills}
-          </a>
-        </div>
-        <div className="flex items-center gap-2 md:gap-3">
-          <LanguageSwitcher />
-          <MobileNav />
-          <a
-            href="#contact"
-            className="rounded-full border border-current px-3 py-2.5 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors hover:bg-background hover:text-foreground md:px-4 md:py-3"
-          >
-            {t.nav.contact}
-          </a>
-        </div>
-      </nav>
+      <header>
+        <ScrollProgress />
 
+        <nav
+          aria-label={locale === "fr" ? "Navigation principale" : "Primary navigation"}
+          className="fixed inset-x-0 top-0 z-50 flex items-center justify-between px-4 py-5 mix-blend-difference text-background sm:px-6 md:px-10"
+        >
+          <a href="#top" className="font-mono text-xs uppercase tracking-[0.24em]">
+            FM<span className="text-primary">.</span>
+          </a>
+          <div className="hidden items-center gap-8 font-mono text-[10px] uppercase tracking-[0.18em] md:flex">
+            <a href="#about" className="transition-opacity hover:opacity-60">
+              {t.nav.about}
+            </a>
+            <a href="#experience" className="transition-opacity hover:opacity-60">
+              {t.nav.experience}
+            </a>
+            <a href="#projets" className="transition-opacity hover:opacity-60">
+              {t.nav.projects}
+            </a>
+            <a href="#skills" className="transition-opacity hover:opacity-60">
+              {t.nav.skills}
+            </a>
+          </div>
+          <div className="flex min-h-11 items-center gap-2 [&_button]:min-h-11 md:gap-3">
+            <LanguageSwitcher />
+            <MobileNav />
+            <a
+              href="#contact"
+              className="inline-flex min-h-11 items-center rounded-full border border-current px-3 font-mono text-[10px] uppercase tracking-[0.18em] transition-colors hover:bg-background hover:text-foreground sm:px-4"
+            >
+              <span className="sm:hidden">{t.nav.contactCompact}</span>
+              <span className="hidden sm:inline">{t.nav.contact}</span>
+            </a>
+          </div>
+        </nav>
+      </header>
+
+      <main id="main" tabIndex={-1} className="min-h-screen overflow-hidden bg-background text-foreground animate-page-in">
       <Reveal
         id="top"
         className="relative flex min-h-screen flex-col justify-center px-6 pb-10 pt-28 md:px-10 md:pb-14 lg:justify-end lg:pt-32 hero-drift"
@@ -136,7 +159,7 @@ export default function Home() {
               <span className="h-10 w-px bg-border" /> {t.hero.scroll}
             </div>
           </div>
-          <PlanetSculpture className="pointer-events-none relative z-10 mx-auto mt-8 hidden aspect-square w-full max-w-[240px] justify-self-center sm:max-w-[300px] md:block lg:mt-0 lg:max-w-[420px] lg:justify-self-end" />
+          <DesktopPlanetSculpture className="pointer-events-none relative z-10 mx-auto mt-8 hidden aspect-square w-full max-w-[240px] justify-self-center sm:max-w-[300px] md:block lg:mt-0 lg:max-w-[420px] lg:justify-self-end" />
         </div>
       </Reveal>
 
@@ -203,6 +226,7 @@ export default function Home() {
                 alt="Portrait de Fenitra Mickaya"
                 width={1086}
                 height={1448}
+                sizes="(min-width: 768px) 44vw, 100vw"
                 className="h-full w-full object-cover"
               />
             </div>
@@ -214,10 +238,10 @@ export default function Home() {
             {t.about.title1} <span className="text-primary">{t.about.highlight}</span>{" "}
             {t.about.title2}
           </h2>
-          <p className="mt-10 max-w-lg text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-10 max-w-lg text-lg leading-relaxed text-muted-foreground [text-wrap:pretty]">
             {t.about.paragraph1}
           </p>
-          <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-lg text-lg leading-relaxed text-muted-foreground [text-wrap:pretty]">
             {t.about.paragraph2}
           </p>
           <div className="mt-10 flex gap-3 font-mono text-[10px] uppercase tracking-wider text-muted-foreground">
@@ -226,6 +250,72 @@ export default function Home() {
             <span>{t.about.traits[1]}</span>
             <span>·</span>
             <span>{t.about.traits[2]}</span>
+          </div>
+        </div>
+      </Reveal>
+
+      <Reveal id="experience" className="bg-card px-6 py-24 md:px-10 md:py-32">
+        <div className="mx-auto max-w-7xl">
+          <div className="mb-14 flex items-end justify-between gap-6">
+            <div>
+              <p className="mb-3 font-mono text-[10px] uppercase tracking-[0.2em] text-primary">
+                {t.experience.label}
+              </p>
+              <h2 className="font-display text-5xl tracking-tight md:text-7xl">
+                {t.experience.title1}
+                <br />
+                <em className="font-display">{t.experience.title2}</em>
+              </h2>
+            </div>
+            <span className="font-mono text-xs text-muted-foreground">
+              {t.experience.count}
+            </span>
+          </div>
+
+          <div className="grid gap-5">
+            {t.experience.items.map((copy, i) => {
+              return (
+                <RevealBlock key={copy.organization} delay={i * 120} y={36}>
+                  <article className="grid overflow-hidden border border-border md:grid-cols-[32%_1fr]">
+                    <div className="flex min-h-40 flex-col justify-between border-b border-border p-6 md:min-h-[22rem] md:border-b-0 md:border-r md:p-8">
+                      <span className="font-display text-7xl leading-none tracking-tight">
+                        {(i + 1).toString().padStart(2, "0")}
+                      </span>
+                      <p className="mt-8 flex items-center gap-2 font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full bg-primary" />
+                        {copy.status}
+                      </p>
+                    </div>
+
+                    <div className="p-6 md:p-8">
+                      <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground">
+                        {copy.context}
+                      </p>
+                      <h3 className="mt-4 text-2xl md:text-3xl">{copy.organization}</h3>
+                      <p className="mt-6 max-w-3xl text-lg leading-relaxed text-muted-foreground">
+                        {copy.summary}
+                      </p>
+                      <div className="mt-8 flex flex-wrap gap-2">
+                        {copy.technologies.map((technology) => (
+                          <span
+                            key={technology}
+                            className="rounded-full border border-border px-3 py-1 font-mono text-[10px] uppercase text-muted-foreground"
+                          >
+                            {technology}
+                          </span>
+                        ))}
+                      </div>
+                      <div className="mt-10 grid gap-4 border-t border-border pt-6 sm:grid-cols-2">
+                        <p className="text-sm font-medium">{copy.role}</p>
+                        <p className="font-mono text-[10px] uppercase tracking-[0.16em] text-muted-foreground sm:text-right">
+                          {copy.period}
+                        </p>
+                      </div>
+                    </div>
+                  </article>
+                </RevealBlock>
+              )
+            })}
           </div>
         </div>
       </Reveal>
@@ -270,6 +360,11 @@ export default function Home() {
                           alt={`${t.projects.imageAlt} ${copy.title}`}
                           width={1200}
                           height={700}
+                          sizes={
+                            project.featured
+                              ? "(min-width: 768px) 62vw, 100vw"
+                              : "(min-width: 768px) 45vw, 100vw"
+                          }
                           className={cn(
                             "h-full w-full object-cover",
                             "imageClass" in project ? project.imageClass : "",
@@ -435,6 +530,7 @@ export default function Home() {
           </div>
         </div>
       </Reveal>
+      </main>
 
       <footer className="flex flex-col justify-between gap-4 border-t border-border px-6 py-6 font-mono text-[10px] uppercase tracking-wider text-muted-foreground md:flex-row md:px-10">
         <span>{t.footer.rights}</span>
@@ -442,6 +538,6 @@ export default function Home() {
           {t.footer.top}
         </a>
       </footer>
-    </main>
+    </>
   )
 }
