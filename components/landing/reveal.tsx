@@ -3,18 +3,34 @@
 import { useEffect, useRef, useState, type ComponentPropsWithoutRef, type CSSProperties } from "react"
 
 const EASE = "cubic-bezier(0.22, 1, 0.36, 1)"
+const REDUCED_MOTION_QUERY = "(prefers-reduced-motion: reduce)"
+
+function getReducedMotionPreference() {
+  return (
+    typeof window !== "undefined" &&
+    typeof window.matchMedia === "function" &&
+    window.matchMedia(REDUCED_MOTION_QUERY).matches
+  )
+}
 
 function useScrollReveal<T extends HTMLElement>(once: boolean) {
   const ref = useRef<T | null>(null)
-  const [visible, setVisible] = useState(false)
+  const [ready, setReady] = useState(false)
+  const [visible, setVisible] = useState(true)
+  const [reducedMotion, setReducedMotion] = useState(getReducedMotionPreference)
 
   useEffect(() => {
     const el = ref.current
     if (!el) return
 
+    const mediaQuery = window.matchMedia?.(REDUCED_MOTION_QUERY)
+    const updateReducedMotion = () => setReducedMotion(mediaQuery?.matches ?? false)
+    updateReducedMotion()
+    setReady(true)
+
     if (typeof IntersectionObserver === "undefined") {
       setVisible(true)
-      return
+      return () => mediaQuery?.removeEventListener?.("change", updateReducedMotion)
     }
 
     const observer = new IntersectionObserver(
@@ -22,7 +38,7 @@ function useScrollReveal<T extends HTMLElement>(once: boolean) {
         if (entry.isIntersecting) {
           setVisible(true)
           if (once) observer.unobserve(entry.target)
-        } else if (!once) {
+        } else {
           setVisible(false)
         }
       },
@@ -30,24 +46,38 @@ function useScrollReveal<T extends HTMLElement>(once: boolean) {
     )
 
     observer.observe(el)
-    return () => observer.disconnect()
+    return () => {
+      observer.disconnect()
+      mediaQuery?.removeEventListener?.("change", updateReducedMotion)
+    }
   }, [once])
 
-  return { ref, visible }
+  return { ref, ready, visible, reducedMotion }
 }
 
 interface RevealStyleProps {
   delay?: number
   y?: number
+  ready: boolean
   visible: boolean
+  reducedMotion: boolean
 }
 
-function revealStyle({ delay = 0, y = 42, visible }: RevealStyleProps): CSSProperties {
+function revealStyle({
+  delay = 0,
+  y = 42,
+  ready,
+  visible,
+  reducedMotion,
+}: RevealStyleProps): CSSProperties | undefined {
+  if (!ready) return undefined
+
   return {
     opacity: visible ? 1 : 0,
-    transform: visible ? "translateY(0)" : `translateY(${y}px)`,
-    transition: `opacity 0.9s ${EASE} ${delay}ms, transform 0.9s ${EASE} ${delay}ms`,
-    willChange: "opacity, transform",
+    transform: reducedMotion ? "none" : visible ? "translateY(0)" : `translateY(${y}px)`,
+    transition: reducedMotion
+      ? `opacity 0.2s ease ${delay}ms`
+      : `opacity 0.9s ${EASE} ${delay}ms, transform 0.9s ${EASE} ${delay}ms`,
   }
 }
 
@@ -65,10 +95,15 @@ export function Reveal({
   once = true,
   ...props
 }: RevealProps) {
-  const { ref, visible } = useScrollReveal<HTMLElement>(once)
+  const { ref, ready, visible, reducedMotion } = useScrollReveal<HTMLElement>(once)
 
   return (
-    <section ref={ref} className={className} style={revealStyle({ delay, y, visible })} {...props}>
+    <section
+      ref={ref}
+      className={className}
+      style={revealStyle({ delay, y, ready, visible, reducedMotion })}
+      {...props}
+    >
       {children}
     </section>
   )
@@ -88,13 +123,13 @@ export function RevealBlock({
   once = true,
   ...props
 }: RevealBlockProps) {
-  const { ref, visible } = useScrollReveal<HTMLDivElement>(once)
+  const { ref, ready, visible, reducedMotion } = useScrollReveal<HTMLDivElement>(once)
 
   return (
     <div
       ref={ref}
       className={className}
-      style={revealStyle({ delay, y, visible })}
+      style={revealStyle({ delay, y, ready, visible, reducedMotion })}
       {...props}
     >
       {children}
